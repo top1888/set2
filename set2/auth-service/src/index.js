@@ -19,6 +19,39 @@ app.get('/', (req, res) => {
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', service: 'auth-service' });
 });
+async function createDefaultAdmin() {
+  try {
+    const email = 'admin@test.com';
+
+    // เช็คว่ามี admin อยู่แล้วไหม
+    const result = await pool.query(
+      'SELECT * FROM users WHERE email = $1',
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      console.log('⚠️ No admin found, creating one...');
+
+      await pool.query(
+        `INSERT INTO users (username, email, password_hash, role)
+         VALUES ($1, $2, $3, $4)`,
+        [
+          'admin',
+          email,
+          '$2b$10$RPH72Wfh/JQ.kj/8HvbObeZnPDQHGrpm5ZObTn1GZmlJgGWJOfEq2',
+          'admin'
+        ]
+      );
+
+      console.log('✅ Default admin created');
+    } else {
+      console.log('ℹ️ Admin already exists');
+    }
+
+  } catch (err) {
+    console.error('❌ Error creating admin:', err.message);
+  }
+}
 
 // ✅ init DB (สำคัญ)
 async function initDB() {
@@ -46,6 +79,7 @@ initDB().catch(console.error);
 
 const PORT = process.env.PORT || 3001;
 
-app.listen(PORT, () => {
+app.listen(PORT, async () => {
   console.log(`Auth Service running on port ${PORT}`);
+   await createDefaultAdmin();
 });

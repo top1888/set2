@@ -5,8 +5,6 @@ const bcrypt = require('bcryptjs');
 const pool = require('../db/db');  
 const { generateToken } = require('../middleware/jwtUtils');
 
-
-// ✅ REGISTER
 router.post('/register', async (req, res) => {
   const { username, email, password } = req.body;
 
@@ -18,7 +16,9 @@ router.post('/register', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const result = await pool.query(
-      'INSERT INTO users (username, email, password_hash) VALUES ($1, $2, $3) RETURNING id, username, email, role',
+      `INSERT INTO users (username, email, password_hash)
+       VALUES ($1, $2, $3)
+       RETURNING id, username, email, role`,
       [username, email.toLowerCase(), hashedPassword]
     );
 
@@ -28,9 +28,6 @@ router.post('/register', async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
-
-    // กัน email ซ้ำ
     if (err.code === '23505') {
       return res.status(400).json({ error: 'Email already exists' });
     }
@@ -39,8 +36,7 @@ router.post('/register', async (req, res) => {
   }
 });
 
-
-// ✅ LOGIN
+// ================= LOGIN =================
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -66,12 +62,16 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ error: 'Invalid password' });
     }
 
-    const token = generateToken({
-      sub: user.id,
-      username: user.username,
-      email: user.email,
-      role: user.role
-    });
+    const token = jwt.sign(
+      {
+        sub: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role
+      },
+      JWT_SECRET,
+      { expiresIn: '1d' }
+    );
 
     res.json({
       message: 'login ok',
@@ -85,7 +85,6 @@ router.post('/login', async (req, res) => {
     });
 
   } catch (err) {
-    console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
