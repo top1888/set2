@@ -1,10 +1,10 @@
 รายงานระบบ Microservices (Set 2)
 👨‍🎓 ชื่อนักศึกษา
 
-นาย/นางสาว: พชร จันทร์ยวง
+นาย: พชร จันทร์ยวง
 รหัสนักศึกษา: 67543210039-3
 
-นาย/นางสาว: ชัยมนัส วัฒนปรีดา
+นาย: ชัยมนัส วัฒนปรีดา
 รหัสนักศึกษา: 67543210069-0
 
 🌐 URL ของทุก Service (Railway)
@@ -71,9 +71,13 @@ deploy แยกได้
   |          |          |
   ▼          ▼          ▼
 [DB1]     [DB2]      [DB3]
+
 (Postgres)(Postgres)(Postgres)
+
 🚪 Gateway Strategy
+
 ✅ ใช้: Nginx Reverse Proxy
+
 📌 Routing:
 
 /api/auth → Auth Service
