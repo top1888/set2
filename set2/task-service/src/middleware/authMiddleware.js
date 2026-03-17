@@ -1,21 +1,19 @@
 const { verifyToken } = require('./jwtUtils');
 
-module.exports = function requireAuth(req, res, next) {
-  const header = req.headers['authorization'] || '';
-  const token  = header.startsWith('Bearer ') ? header.slice(7) : null;
+module.exports = (req, res, next) => {
+  const authHeader = req.headers.authorization;
 
-  if (!token) {
-    console.log("❌ [Auth] No token provided in headers");
-    return res.status(401).json({ error: 'Unauthorized: No token provided' });
+  if (!authHeader) {
+    return res.status(401).json({ error: 'No token provided' });
   }
+
+  const token = authHeader.split(' ')[1];
 
   try {
     const decoded = verifyToken(token);
-    req.user = decoded; // เก็บข้อมูล user ไว้ใน req
-    console.log(`✅ [Auth] User ${decoded.username || decoded.sub} Authorized`);
+    req.user = decoded;
     next();
   } catch (err) {
-    console.error("🔥 [Auth] JWT Verify Failed:", err.message);
-    return res.status(401).json({ error: 'Unauthorized: ' + err.message });
+    return res.status(401).json({ error: 'Invalid or expired token' });
   }
 };

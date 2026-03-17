@@ -1,17 +1,20 @@
 const { Pool } = require('pg');
+const fs = require('fs');
 
 const pool = new Pool({
-  host: process.env.DB_HOST || 'task-db',
-  user: process.env.DB_USER || 'admin',
-  password: process.env.DB_PASSWORD || 'admin123',
-  database: process.env.DB_NAME || 'taskdb',
-  port: 5432,
+  connectionString: process.env.DATABASE_URL,
+  ssl: { rejectUnauthorized: false }
 });
 
-// เช็ค Connection ทันที
-pool.query('SELECT NOW()', (err, res) => {
-  if (err) console.error('❌ Database Connection Failed:', err.message);
-  else console.log('✅ Database Connected to TaskDB');
-});
+async function initDB() {
+  try {
+    console.log("Initializing DB...");
+    const sql = fs.readFileSync('./init.sql').toString();
+    await pool.query(sql);
+    console.log("DB initialized ✅");
+  } catch (err) {
+    console.error("DB init error:", err);
+  }
+}
 
-module.exports = { pool };
+module.exports = { pool, initDB };
