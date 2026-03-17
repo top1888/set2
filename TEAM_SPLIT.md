@@ -1,85 +1,100 @@
-Markdown
-# TEAM_SPLIT.md
+⚠️ ปัญหาที่พบและวิธีแก้
+❌ ปัญหา 1: Railway clone repository ผิดโครงสร้าง ทำให้หาไฟล์ไม่เจอ
 
-## Team Members
-- 67543210039-3 พชร จันทร์ยวง
-- 67543210069-0 ชัยมนัส วัฒนปรีดา
+สาเหตุ:
+Repository ที่ใช้ deploy มีโครงสร้างเป็นหลายโฟลเดอร์ (เช่น frontend/, auth-service/)
+แต่ Railway จะ build จาก root ของ repository ทำให้ไม่พบไฟล์สำคัญ เช่น:
 
-## Work Allocation
+Could not find root directory: frontend
+COPY frontend/ /usr/share/nginx/html → not found
 
-### Student 1: พชร จันทร์ยวง
-- รับผิดชอบ **Auth Service** (ระบบยืนยันตัวตน และการออก JWT)
-- รับผิดชอบ **Log Service** (ระบบบันทึก Audit Log กลาง)
-- ออกแบบและจัดการ **Database Schema** (PostgreSQL init script)
+ส่งผลให้ build ล้มเหลว และ container ไม่สามารถ start ได้
 
-### Student 2: ชัยมนัส วัฒนปรีดา
-- รับผิดชอบ **Task Service** (ระบบจัดการ CRUD ของ Task ทั้งหมด)
-- รับผิดชอบ **Nginx Reverse Proxy** และการตั้งค่า **HTTPS/SSL Certificate**
-- รับผิดชอบ **Frontend** (UI) และการทำ **Docker Compose Integration**
+วิธีแก้:
 
-## Shared Responsibilities
-- ออกแบบ Architecture Diagram ของระบบร่วมกัน
-- ร่วมกันแก้ไขปัญหา (Debug) การเชื่อมต่อระหว่าง Microservices ผ่าน Nginx
-- จัดทำ README และรวบรวม Screenshots สำหรับการส่งงาน
+แยก repository ตาม service (เช่น frontend แยก repo)
 
-## Reason for Work Split
-เราแบ่งงานตาม **Service Boundary** เพื่อให้แต่ละคนได้ฝึกการเขียน Microservice ที่สมบูรณ์ตั้งแต่ Logic ไปจนถึงการจัดการ Data โดยแบ่งความรับผิดชอบในส่วน Security (Auth) และ Core Business (Task) ออกจากกันเพื่อความชัดเจนในการพัฒนา
+หรือปรับโครงสร้างให้ไฟล์ที่ใช้ build อยู่ที่ root
 
-## Integration Notes
-งานของทั้งสองคนเชื่อมต่อกันผ่าน **Nginx API Gateway** โดยที่ Frontend (ชัยมนัส) จะส่ง Request ไปขอ Token จาก Auth Service (พชร) และนำ Token นั้นมาแนบใน Header เพื่อเรียกใช้งาน Task Service (ชัยมนัส) โดยทุกกิจกรรมจะถูกส่งไปบันทึกที่ Log Service (พชร) เพื่อความโปร่งใสของระบบ
-2. ไฟล์ INDIVIDUAL_REPORT_67543210039-3.md (ของคุณพชร)
-Markdown
-# INDIVIDUAL_REPORT_67543210039-3
+สร้าง branch ใหม่สำหรับ deploy:
 
-## ข้อมูลผู้จัดทำ
-- **ชื่อ-นามสกุล:** พชร จันทร์ยวง
-- **รหัสนักศึกษา:** 67543210039-3
+git checkout -b deploy-frontend
 
-## ส่วนที่รับผิดชอบ
-- ระบบยืนยันตัวตน (Auth Service)
-- ระบบบันทึกข้อมูลเหตุการณ์ (Log Service)
-- การออกแบบฐานข้อมูล (Database Design)
+commit และ push ขึ้น GitHub แล้วเชื่อม Railway ใหม่
 
-## สิ่งที่ได้ลงมือพัฒนาด้วยตนเอง
-- พัฒนา Auth Service ด้วย Node.js เพื่อจัดการ Login และออก JWT Token
-- ออกแบบ SQL Script สำหรับสร้าง Table Users, Tasks และ Logs พร้อม Seed ข้อมูลเบื้องต้น
-- สร้าง Log Service เพื่อรับข้อมูลแบบ POST จาก Service อื่นๆ มาบันทึกลง PostgreSQL
+ผลลัพธ์:
 
-## ปัญหาที่พบและวิธีการแก้ไข
-- **ปัญหา:** ไฟล์ขยะพวก .cwd หรือไฟล์ Temp หลุดเข้าไปใน Git ทำให้โครงสร้างดูไม่เรียบร้อย
-- **การแก้ไข:** แก้ไขไฟล์ .gitignore เพื่อป้องกันไฟล์เหล่านั้น และใช้คำสั่ง git rm --cached เพื่อลบไฟล์ที่เผลอ Commit ออกจากระบบโดยไม่กระทบไฟล์จริง
+Railway สามารถ build และ deploy ได้สำเร็จ
 
-## สิ่งที่ได้เรียนรู้จากงานนี้
-- เข้าใจการทำงานของ Stateless Authentication โดยใช้ JWT
-- เรียนรู้การจัดการฐานข้อมูลเดียว (Shared Database) ในบริบทของ Microservices
+container ทำงานได้ปกติ และเข้าผ่าน URL ได้
 
-## แนวทางที่ต้องการพัฒนาต่อใน Set 2
-- ต้องการแยก Database ออกเป็นของแต่ละ Service (Database per Service) เพื่อให้ตรงตามมาตรฐาน Microservices มากยิ่งขึ้น
-3. ไฟล์ INDIVIDUAL_REPORT_67543210069-0.md (ของเพื่อน)
-Markdown
-# INDIVIDUAL_REPORT_67543210069-0
+❌ ปัญหา 2: เกิด error <html> is not valid JSON
 
-## ข้อมูลผู้จัดทำ
-- **ชื่อ-นามสกุล:** ชัยมนัส วัฒนปรีดา
-- **รหัสนักศึกษา:** 67543210069-0
+สาเหตุ:
+frontend เรียก API ผิด endpoint ทำให้ request ไปที่ nginx แล้วถูก redirect ไปหน้า HTML แทนที่จะเป็น JSON
 
-## ส่วนที่รับผิดชอบ
-- ระบบจัดการงาน (Task Service)
-- การตั้งค่า Nginx Reverse Proxy และ HTTPS
-- การพัฒนาส่วนหน้าจอ (Frontend) และ Docker Compose
+วิธีแก้:
 
-## สิ่งที่ได้ลงมือพัฒนาด้วยตนเอง
-- พัฒนา Task Service สำหรับ CRUD ข้อมูลงาน โดยมีการเช็คสิทธิ์ผ่าน JWT Middleware
-- กำหนดค่า nginx.conf เพื่อทำ TLS Termination และกระจาย Request ไปยัง Service ต่างๆ
-- เขียน docker-compose.yml เพื่อให้ทุก Container ทำงานร่วมกันได้ผ่าน Network เดียวกัน
+แก้ URL ให้ถูกต้อง:
 
-## ปัญหาที่พบและวิธีการแก้ไข
-- **ปัญหา:** การเข้าใช้งานผ่าน HTTPS ในช่วงแรกติดปัญหาเรื่อง Certificate ไม่น่าเชื่อถือบนเบราว์เซอร์
-- **การแก้ไข:** สร้าง Self-signed Certificate และตั้งค่า Nginx ให้ชี้ไปยัง Path ของ Key และ CRT อย่างถูกต้อง พร้อมแจ้งผู้ใช้งานให้กดยอมรับความเสี่ยงในหน้าเบราว์เซอร์
+fetch('/api/auth/login')
 
-## สิ่งที่ได้เรียนรู้จากงานนี้
-- เรียนรู้การทำงานของ API Gateway และการทำ Reverse Proxy ด้วย Nginx
-- เข้าใจการทำ Containerization ด้วย Docker และการใช้ Docker Compose จัดการระบบหลายเซอร์วิส
+ตรวจสอบ routing ใน API Gateway (Nginx) ให้ตรงกับ service
 
-## แนวทางที่ต้องการพัฒนาต่อใน Set 2
-- พัฒนาหน้าจอ Frontend ให้เป็น Single Page Application (SPA) ด้วย React เพื่อความลื่นไหลในการใช้งานมากขึ้น
+ผลลัพธ์:
+
+API ตอบกลับเป็น JSON ถูกต้อง
+
+frontend สามารถ login ได้สำเร็จ
+
+❌ ปัญหา 3: JWT error (jwt is not defined / JWT_SECRET not defined)
+
+สาเหตุ:
+
+ลืม import library jsonwebtoken
+
+ไม่ได้กำหนดค่า JWT_SECRET
+
+วิธีแก้:
+
+เพิ่ม:
+
+const jwt = require('jsonwebtoken');
+const JWT_SECRET = process.env.JWT_SECRET || 'secret123';
+
+ตั้งค่า Environment Variable ใน Railway:
+
+JWT_SECRET=your_secret_key
+
+ผลลัพธ์:
+
+สามารถ generate token ได้
+
+ระบบ login ทำงานได้ปกติ
+
+❌ ปัญหา 4: Database ยังไม่ถูกสร้างแต่มีการ insert ข้อมูล
+
+สาเหตุ:
+เรียก createDefaultAdmin() ก่อน initDB() ทำให้ table ยังไม่ถูกสร้าง
+
+วิธีแก้:
+จัดลำดับการทำงานใหม่:
+
+await initDB();
+await createDefaultAdmin();
+
+ผลลัพธ์:
+
+Database ถูกสร้างก่อนใช้งาน
+
+สามารถ insert admin ได้สำเร็จ
+
+🎯 สรุปภาพรวม
+
+ปัญหาที่พบส่วนใหญ่เกี่ยวข้องกับ:
+
+การ deploy (Railway / Docker)
+
+การเชื่อมต่อระหว่าง services
+
+การตั้งค่า environment และ routing
