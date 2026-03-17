@@ -1,6 +1,11 @@
 const express = require('express');
 const { pool } = require('../db/db');
+const authMiddleware = require('../middleware/authMiddleware');
+
 const router = express.Router();
+
+// 🔥 สำคัญมาก
+router.use(authMiddleware);
 
 // GET Tasks
 router.get('/', async (req, res) => {
