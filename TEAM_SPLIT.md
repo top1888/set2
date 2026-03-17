@@ -1,3 +1,112 @@
+TEAM_SPLIT.md — Final Lab Set 2 (ใส่ชื่อแล้ว)
+# TEAM_SPLIT.md — Final Lab Set 2
+
+## Team Members
+- พชร จันทร์ยวง (650000001)
+- ชัยมนัส วัฒนปรีดา (650000002)
+
+---
+
+## Work Allocation
+
+### Student 1: พชร จันทร์ยวง (650000001)
+- พัฒนา Auth Service
+  - เพิ่ม Register API
+  - เพิ่ม Login API (JWT)
+  - สร้าง Default Admin อัตโนมัติ
+  - ปรับ logEvent → บันทึกลง DB โดยตรง
+- จัดการฐานข้อมูล auth-db (PostgreSQL)
+- Deploy Auth Service + auth-db บน Railway
+- เขียน init.sql สำหรับ users table
+
+---
+
+### Student 2: ชัยมนัส วัฒนปรีดา (650000002)
+- พัฒนา Task Service
+  - CRUD Tasks
+  - รับ JWT จาก Auth Service
+  - ปรับ logEvent → บันทึกลง DB ของตัวเอง
+- พัฒนา User Service (สร้างใหม่)
+  - ดึงข้อมูล user profile จาก user_id
+- Deploy Task Service + User Service + DB บน Railway
+- พัฒนา Frontend
+  - Register form
+  - Login form
+  - config.js สำหรับเรียก API Gateway
+  - profile.html สำหรับแสดงข้อมูล user
+
+---
+
+## Shared Responsibilities
+- ออกแบบและเขียน docker-compose.yml สำหรับรัน local
+- ออกแบบ Architecture Diagram (Microservices + 3 Databases)
+- ทดสอบระบบ End-to-End บน Railway
+- เขียน README.md และแนบ screenshots การทำงาน
+
+---
+
+## Integration Notes
+
+### 🔐 1. JWT Authentication
+- Auth Service ทำหน้าที่ generate JWT token หลัง login
+- token จะมีข้อมูล:
+  - user_id (sub)
+  - username
+  - email
+  - role
+
+}
+🔑 2. JWT_SECRET ต้องตรงกัน
+
+ทุก service (Auth, Task, User, Log) ใช้ JWT_SECRET เดียวกัน
+
+เพื่อให้สามารถ verify token ได้จากทุก service
+
+ตัวอย่าง:
+
+JWT_SECRET=supersecretkey123
+🔗 3. การเชื่อมกันด้วย user_id
+
+แต่ละ service มี database แยกกัน
+
+ไม่สามารถใช้ Foreign Key ข้าม database ได้
+
+👉 ใช้ user_id เป็น logical reference
+
+📌 Flow การทำงาน
+
+Login → Auth Service → ได้ JWT
+
+Client ส่ง token ไป Task Service
+
+Task Service decode → ได้ user_id
+
+ใช้ user_id เป็นเจ้าของ task
+
+User Service ใช้ user_id ดึง profile
+
+🧩 4. API Gateway (Nginx)
+
+/api/auth → Auth Service
+
+/api/tasks → Task Service
+
+/api/users → User Service
+
+/api/logs → Log Service
+
+/ → Frontend
+
+⚠️ ข้อจำกัด
+
+ไม่มี Foreign Key ข้าม database
+
+ใช้ user_id เป็น logical reference
+
+ไม่มี distributed transaction
+
+consistency เป็น eventual consistency
+
 ⚠️ ปัญหาที่พบและวิธีแก้
 ❌ ปัญหา 1: Railway clone repository ผิดโครงสร้าง ทำให้หาไฟล์ไม่เจอ
 
