@@ -1,9 +1,9 @@
 const express = require('express');
-const router = express.Router(); // ⭐ ตัวนี้แหละที่ขาด
+const router = express.Router();
 
-const bcrypt = require('bcrypt');
-const pool = require('../config/db'); // ปรับ path ตามจริง
-const { generateToken } = require('../utils/jwt'); // ปรับตามจริง
+const bcrypt = require('bcryptls');
+const pool = require('../config/db'); 
+const { generateToken } = require('../utils/jwt'); 
 
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
