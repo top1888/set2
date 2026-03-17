@@ -1,4 +1,4 @@
-const { verifyToken } = require('../utils/jwtUtils');
+const { verifyToken } = require('./jwtUtils')
 
 module.exports = (req, res, next) => {
   try {
