@@ -1,28 +1,27 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const { pool } = require('../db/db');
-const { generateToken, verifyToken } = require('../middleware/jwtUtils');
-
-const router = express.Router();
-
-router.post('/register', async (req, res) => {
-  const { username, email, password, role } = req.body;
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
 
   try {
-    if (!username || !email || !password) {
-      return res.status(400).json({ error: 'กรุณากรอกข้อมูลให้ครบ' });
+    if (!email || !password) {
+      return res.status(400).json({ error: 'กรุณากรอก email และ password' });
     }
 
-    const passwordHash = await bcrypt.hash(password, 10);
-
     const result = await pool.query(
-      `INSERT INTO users (username, email, password_hash, role)
-       VALUES ($1, $2, $3, $4)
-       RETURNING id, username, email, role`,
-      [username, email.toLowerCase(), passwordHash, role || 'member']
+      'SELECT * FROM users WHERE email = $1',
+      [email.toLowerCase()]
     );
 
     const user = result.rows[0];
+
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password_hash);
+
+    if (!isMatch) {
+      return res.status(401).json({ error: 'Invalid password' });
+    }
 
     const token = generateToken({
       sub: user.id,
@@ -31,16 +30,19 @@ router.post('/register', async (req, res) => {
       role: user.role
     });
 
-    res.status(201).json({ message: 'ok', token, user });
+    res.json({
+      message: 'login ok',
+      token,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role
+      }
+    });
 
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: err.message });
   }
 });
-
-router.post('/login', async (req, res) => {
-  res.json({ message: 'login ok' });
-});
-
-module.exports = router;
