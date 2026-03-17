@@ -1,3 +1,10 @@
+const express = require('express');
+const router = express.Router(); // ⭐ ตัวนี้แหละที่ขาด
+
+const bcrypt = require('bcrypt');
+const pool = require('../config/db'); // ปรับ path ตามจริง
+const { generateToken } = require('../utils/jwt'); // ปรับตามจริง
+
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
@@ -46,3 +53,5 @@ router.post('/login', async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
+module.exports = router; 
