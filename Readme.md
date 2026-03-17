@@ -5,19 +5,18 @@
 ---
 
 ### 🧑‍💻 ข้อมูลนักศึกษา
-* **[ พชร จัทร์ยวง ]** - 67543210039-3: [รหัส]
-* **[ ชัยมนัส วัมนปรีดา ]** - 67543210069-0: [รหัส]
+* **[ พชร จัทร์ยวง ]** - 67543210039-3
+* **[ ชัยมนัส วัมนปรีดา ]** - 67543210069-0
 
 ---
 
 ### 🌐 Railway Service URLs
 | Service | Production URL |
 | :--- | :--- |
-| **Frontend (UI)** | https://www.facebook.com/photo.php?fbid=1210298607764800&set=a.683592353768764&id=100063540163933 |
-| **Gateway (Nginx)** | https://github.com/BertramRay/railway-nginx-basic-auth |
-| **Auth Service** | https://auth0.com/ |
-| **Task Service** | https://tasksupportservices.org/contact-us |
-
+| **Frontend (UI)** | https://frontend-production-1577.up.railway.app/ |
+| **Auth Service** | https://user-service-production-64f6.up.railway.app/ |
+| **Task Service** | https://task-service-production-073d.up.railway.app/ |
+| **users Service** | https://user-service-production-64f6.up.railway.app/ |
 ---
 
 ### 📋 Project Overview (Set 1 vs Set 2)
