@@ -12,25 +12,21 @@
 
 ## 🌐 URL ของทุก Service (Railway)
 
-### API Gateway (Nginx)
-
-👉 https://your-gateway.up.railway.app
-
 ### Auth Service
 
-👉 https://your-auth.up.railway.app
+https://set2-production.up.railway.app/
 
 ### Task Service
 
-👉 https://your-task.up.railway.app
+https://task-service-production-073d.up.railway.app/
 
-### Log Service
+### Users Service
 
-👉 https://your-log.up.railway.app
+https://user-service-production-64f6.up.railway.app/
 
 ### Frontend
 
-👉 https://your-frontend.up.railway.app
+https://frontend-production-1577.up.railway.app/
 
 ---
 
@@ -92,7 +88,7 @@
 
 * `/api/auth` → Auth Service
 * `/api/tasks` → Task Service
-* `/api/logs` → Log Service
+* `/api/logs` → Users Service
 * `/` → Frontend
 
 ### 🎯 เหตุผลที่เลือก
@@ -115,7 +111,7 @@ docker-compose up --build
 * nginx
 * auth-service
 * task-service
-* log-service
+* user-service
 * postgres (3 ตัว)
 
 ### 📌 หลังรัน
@@ -123,7 +119,7 @@ docker-compose up --build
 * Gateway: http://localhost
 * Auth: http://localhost/api/auth
 * Task: http://localhost/api/tasks
-* Log: http://localhost/api/logs
+* user: http://localhost/api/logs
 
 ---
 
